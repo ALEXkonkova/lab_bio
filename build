@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# build script for EJ
+
+PP="$2/$3"
+
+MAINFILE=main.py
+
+COMMONFILES="CoderInterface.py ConfigException.py ConfigReaderInterface.py FileReaderInterface.py"
+
+PROJECTSRC="MyCoder.py MyConfigReader.py MyFileReader.py"
+
+cp $MAINFILE __main__.py
+zip $PP __main__.py $COMMONFILES $PROJECTSRC
+echo "#!/usr/bin/env python3" > $PP
+cat "$PP".zip >> $PP
+chmod +x $PP
+rm -f __main__.py
+rm -f "$PP".zip

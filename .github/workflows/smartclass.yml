@@ -1,0 +1,112 @@
+name: Autograding Tests
+on:
+  - pull_request
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-bookworm
+      env:
+        PYTHON: "3.11"
+      volumes:
+        - /mnt/smartclass:/mnt/smartclass
+    steps:
+      - name: Display pull request title
+        run: echo ${{ github.event.pull_request.title }}
+      - name: Display commit message
+        run: echo ${{ github.event.head_commit.message }}
+      - name: Try install
+        run: |
+          apt-get update
+          apt-get -y install python3-setuptools
+          apt-get -y install python3-pytest
+          apt-get -y install python3-pip
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - id: test1
+        name: self_test
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: self_test
+          setup-command: ""
+          command: pytest
+          timeout: 0
+          max-score: 10
+      - id: test2
+        name: example_test
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: example_test
+          setup-command: ""
+          command: make example_test
+          max-score: 10
+      - id: test3
+        name: test_source
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test_source
+          setup-command: ""
+          command: make test_source
+          max-score: 10
+      - id: test4
+        name: test_atb
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test_atb
+          setup-command: ""
+          command: make test_atb
+          max-score: 10
+      - id: test5
+        name: test_caesar
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test_caesar
+          setup-command: ""
+          command: make test_caesar
+          max-score: 10
+      - id: test6
+        name: test_cwrd
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test_cwrd
+          setup-command: ""
+          command: make test_cwrd
+          max-score: 10
+      - id: test7
+        name: test_rew
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test_rew
+          setup-command: ""
+          command: make test_rew
+          max-score: 10
+      - id: test8
+        name: test_rle
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test_rle
+          setup-command: ""
+          command: make test_rle
+          max-score: 10
+      - id: test9
+        name: test_rot1
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: test_rot1
+          setup-command: ""
+          command: make test_rot1
+          max-score: 10
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          TEST1_RESULTS: ${{steps.test1.outputs.result}}
+          TEST2_RESULTS: ${{steps.test2.outputs.result}}
+          TEST3_RESULTS: ${{steps.test3.outputs.result}}
+          TEST4_RESULTS: ${{steps.test4.outputs.result}}
+          TEST5_RESULTS: ${{steps.test5.outputs.result}}
+          TEST6_RESULTS: ${{steps.test6.outputs.result}}
+          TEST7_RESULTS: ${{steps.test7.outputs.result}}
+          TEST8_RESULTS: ${{steps.test8.outputs.result}}
+          TEST9_RESULTS: ${{steps.test9.outputs.result}}
+        with:
+          runners: test1,test2,test3,test4,test5,test6,test7,test8,test9
